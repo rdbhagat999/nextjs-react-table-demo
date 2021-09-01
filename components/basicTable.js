@@ -4,14 +4,15 @@ import { useTable, useSortBy, useGlobalFilter, useFilters, usePagination } from 
 import styles from '../styles/basicTable.module.css'
 
 import { COLUMNS, GROUPED_COLUMNS } from './columns'
-import MOCK_DATA from '../utils/MOCK_DATA.json'
+// import MOCK_DATA from '../utils/MOCK_DATA.json'
 import GlobalFilter from './globalFilter';
 import ColumnFilter from './columnFilter';
 
-function BasicTable() {
+function BasicTable({MOCK_DATA}) {
 
     const columns = useMemo(() => GROUPED_COLUMNS, [])
-    const data = useMemo(() => MOCK_DATA, [])
+    // const data = useMemo(() => MOCK_DATA, [])
+    const data = MOCK_DATA
     
     const defaultColumn = useMemo(() => {
         return {

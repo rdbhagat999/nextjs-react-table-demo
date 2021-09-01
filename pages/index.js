@@ -1,8 +1,9 @@
 import Head from 'next/head'
 
 import BasicTable from '../components/basicTable'
+import MOCK_DATA from '../utils/MOCK_DATA.json'
 
-export default function Home() {
+export default function Home({MOCK_DATA}) {
   return (
     <div>
       <Head>
@@ -18,11 +19,19 @@ export default function Home() {
 
         <div>
 
-          <BasicTable />
+          <BasicTable MOCK_DATA={MOCK_DATA} />
 
         </div>
       </main>
       
     </div>
   )
+}
+
+export const getStaticProps = async (ctx) => {
+  return {
+    props:{
+      MOCK_DATA
+    }
+  }
 }
