@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useTable, useSortBy, useGlobalFilter, useFilters } from 'react-table'
+import { useTable, useSortBy, useGlobalFilter, useFilters, usePagination } from 'react-table'
 
 import styles from '../styles/basicTable.module.css'
 
@@ -23,19 +23,26 @@ function BasicTable() {
         {
             columns,
             data,
-            defaultColumn
+            defaultColumn,
+            initialState: {
+                pageIndex: 0
+            }
         },
         useFilters,
         useGlobalFilter,
         useSortBy,
+        usePagination,
     )
 
     const {
         getTableProps, getTableBodyProps,
         headerGroups, footerGroups, rows,
+        page, pageOptions, pageCount, gotoPage,
+        setPageSize, nextPage, previousPage,
+        canNextPage, canPreviousPage,
         prepareRow, state, setGlobalFilter } = tableInstance;
     
-    const { globalFilter } = state;
+    const { globalFilter, pageIndex, pageSize } = state;
 
     return (
         <>
@@ -56,7 +63,7 @@ function BasicTable() {
                     ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                    {rows.map((row, i) => {
+                    {page.map((row, i) => {
                         prepareRow(row)
                         
                         return (<tr key={i} {...row.getRowProps()}>
@@ -76,6 +83,30 @@ function BasicTable() {
                     ))}
                 </tfoot>
             </table>
+            <div className={styles.pagination}>
+                <span>
+                    Page
+                    {' '}
+                    <strong>
+                        {pageIndex + 1} of {pageOptions.length}
+                    </strong>
+                    {' '}
+                </span>
+                <div className={styles.buttons}>
+                    <select value={pageSize} onChange={e => setPageSize(Number(event.target.value))}>
+                        {
+                            [10, 30, 50, 100].map(page => (<option key={page} value={page}>
+                                Show {page}
+                            </option>))
+                        }
+                    </select>
+                    <button onClick={() => gotoPage(0)} disabled={ !canPreviousPage }> {'<<'} </button>
+                    <button onClick={previousPage} disabled={ !canPreviousPage }>Previous</button>
+                    <button onClick={nextPage} disabled={ !canNextPage }>Next</button>
+                    <button onClick={() => gotoPage(pageCount - 1)} disabled={ !canNextPage }> {'>>'} </button>
+                </div>
+            </div>
+            
         </>
     );
 }
