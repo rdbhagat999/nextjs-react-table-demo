@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useTable, useSortBy, useGlobalFilter, useFilters, usePagination } from 'react-table'
+import { useTable, useSortBy, useGlobalFilter, useFilters, usePagination, useRowSelect, } from 'react-table'
 
 import styles from '../styles/basicTable.module.css'
 
@@ -7,6 +7,7 @@ import { COLUMNS, GROUPED_COLUMNS } from './columns'
 // import MOCK_DATA from '../utils/MOCK_DATA.json'
 import GlobalFilter from './globalFilter';
 import ColumnFilter from './columnFilter';
+import Checkbox from './Checkbox';
 
 function BasicTable({MOCK_DATA}) {
 
@@ -33,6 +34,25 @@ function BasicTable({MOCK_DATA}) {
         useGlobalFilter,
         useSortBy,
         usePagination,
+        useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push(cols => {
+                return [
+                    {
+                        id: 'selection',
+                        // eslint-disable-next-line react/display-name
+                        Header: ({ getToggleAllRowsSelectedProps }) => (
+                            <Checkbox {...getToggleAllRowsSelectedProps()} />
+                        ),
+                        // eslint-disable-next-line react/display-name
+                        Cell: ({ row }) => (
+                            <Checkbox {...row.getToggleRowSelectedProps()} />
+                        )
+                    },
+                    ...cols,
+                ]
+            })
+        }
     )
 
     const {
@@ -41,7 +61,9 @@ function BasicTable({MOCK_DATA}) {
         page, pageOptions, pageCount, gotoPage,
         setPageSize, nextPage, previousPage,
         canNextPage, canPreviousPage,
-        prepareRow, state, setGlobalFilter } = tableInstance;
+        prepareRow, state, setGlobalFilter,
+        selectedFlatRows,
+    } = tableInstance;
     
     const { globalFilter, pageIndex, pageSize } = state;
 
